@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Počítačové siete – DÚ</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0a0a0f;
+      --surface: #12121a;
+      --border: #1e1e2e;
+      --accent: #00e5ff;
+      --accent2: #ff6b35;
+      --text: #e8e8f0;
+      --muted: #6b6b88;
+      --green: #39ff85;
+      --card: #15151f;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Syne', sans-serif;
+      font-size: 16px;
+      line-height: 1.7;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(0,229,255,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,229,255,0.03) 1px, transparent 1px);
+      background-size: 40px 40px;
+      pointer-events: none;
+      z-index: 0;
+    }
+    header {
+      position: relative;
+      z-index: 10;
+      padding: 3rem 2rem 2rem;
+      max-width: 960px;
+      margin: 0 auto;
+      border-bottom: 1px solid var(--border);
+    }
+    .badge {
+      display: inline-block;
+      font-family: 'Space Mono', monospace;
+      font-size: 0.7rem;
+      color: var(--accent);
+      border: 1px solid var(--accent);
+      padding: 2px 10px;
+      border-radius: 2px;
+      letter-spacing: 0.15em;
+      margin-bottom: 1rem;
+      text-transform: uppercase;
+    }
+    h1 {
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      font-weight: 800;
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+      color: #fff;
+    }
+    h1 span { color: var(--accent); }
+    .subtitle {
+      margin-top: 0.75rem;
+      color: var(--muted);
+      font-size: 1rem;
+      font-family: 'Space Mono', monospace;
+    }
+    nav {
+      position: relative;
+      z-index: 10;
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 1.5rem 2rem;
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      border-bottom: 1px solid var(--border);
+    }
+    nav a {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.8rem;
+      color: var(--muted);
+      text-decoration: none;
+      padding: 6px 14px;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      transition: all 0.2s ease;
+      letter-spacing: 0.05em;
+    }
+    nav a:hover, nav a.active {
+      color: var(--accent);
+      border-color: var(--accent);
+      background: rgba(0,229,255,0.05);
+    }
+    main {
+      position: relative;
+      z-index: 10;
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+    .tema { display: none; animation: fadeIn 0.4s ease; }
+    .tema.visible { display: block; }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(12px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .uloha {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      margin-bottom: 2rem;
+      overflow: hidden;
+    }
+    .uloha-header {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 1.25rem 1.5rem;
+      cursor: pointer;
+      border-bottom: 1px solid var(--border);
+      background: var(--surface);
+      user-select: none;
+      transition: background 0.2s;
+    }
+    .uloha-header:hover { background: #1a1a28; }
+    .uloha-num {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.7rem;
+      color: var(--accent2);
+      background: rgba(255,107,53,0.1);
+      border: 1px solid rgba(255,107,53,0.3);
+      padding: 2px 10px;
+      border-radius: 2px;
+      white-space: nowrap;
+    }
+    .uloha-title { flex: 1; font-weight: 600; font-size: 1rem; color: #fff; }
+    .uloha-toggle {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.85rem;
+      color: var(--muted);
+      transition: transform 0.3s;
+    }
+    .uloha.open .uloha-toggle { transform: rotate(180deg); }
+    .uloha-body {
+      padding: 0 1.5rem;
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.4s ease, padding 0.3s ease;
+    }
+    .uloha.open .uloha-body { max-height: 5000px; padding: 1.5rem; }
+    .otazka {
+      margin-bottom: 2rem;
+      padding-bottom: 2rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .otazka:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+    .otazka-label {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.75rem;
+      color: var(--green);
+      margin-bottom: 0.5rem;
+      letter-spacing: 0.1em;
+    }
+    .otazka h3 {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--accent);
+      margin-bottom: 1rem;
+      line-height: 1.4;
+    }
+    .otazka p, .otazka li { color: #c8c8de; font-size: 0.95rem; line-height: 1.8; }
+    .otazka ul, .otazka ol { padding-left: 1.5rem; margin-top: 0.5rem; }
+    .otazka li { margin-bottom: 0.4rem; }
+    .info-box {
+      background: rgba(0,229,255,0.04);
+      border-left: 3px solid var(--accent);
+      padding: 1rem 1.25rem;
+      border-radius: 0 6px 6px 0;
+      margin: 1rem 0;
+    }
+    .info-box p { color: var(--text); }
+    .kabel-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      margin-top: 1rem;
+    }
+    @media (max-width: 600px) { .kabel-grid { grid-template-columns: 1fr; } }
+    .kabel-card {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      overflow: hidden;
+    }
+    .kabel-card-title {
+      background: var(--surface);
+      padding: 0.6rem 1rem;
+      font-family: 'Space Mono', monospace;
+      font-size: 0.8rem;
+      color: var(--accent2);
+      border-bottom: 1px solid var(--border);
+    }
+    .kabel-pins { padding: 0.75rem 1rem; display: flex; flex-direction: column; gap: 4px; }
+    .pin-row { display: flex; align-items: center; gap: 10px; font-family: 'Space Mono', monospace; font-size: 0.78rem; }
+    .pin-num { width: 20px; text-align: right; color: var(--muted); flex-shrink: 0; }
+    .pin-wire { display: inline-block; padding: 2px 10px; border-radius: 3px; font-weight: 700; font-size: 0.72rem; letter-spacing: 0.03em; }
+    .w-bo { background:#ff8c00; color:#000; }
+    .w-o  { background:#ff6600; color:#fff; }
+    .w-bz { background:#27ae60; color:#fff; }
+    .w-z  { background:#1a7a40; color:#fff; }
+    .w-bm { background:#2980b9; color:#fff; }
+    .w-m  { background:#1a5fa0; color:#fff; }
+    .w-bh { background:#8b5cf6; color:#fff; }
+    .w-h  { background:#6d3fc4; color:#fff; }
+    .comp-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; margin-top: 1rem; }
+    .comp-table th {
+      background: var(--surface);
+      color: var(--accent);
+      font-family: 'Space Mono', monospace;
+      font-size: 0.75rem;
+      letter-spacing: 0.08em;
+      padding: 0.6rem 1rem;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+    .comp-table td {
+      padding: 0.65rem 1rem;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+      color: #c8c8de;
+    }
+    .comp-table tr:last-child td { border-bottom: none; }
+    .comp-table tr:hover td { background: rgba(255,255,255,0.02); }
+    .tag-plus  { color: var(--green); font-weight: 700; }
+    .tag-minus { color: #ff4d6a; font-weight: 700; }
+    footer {
+      position: relative;
+      z-index: 10;
+      max-width: 960px;
+      margin: 3rem auto 0;
+      padding: 1.5rem 2rem;
+      border-top: 1px solid var(--border);
+      font-family: 'Space Mono', monospace;
+      font-size: 0.72rem;
+      color: var(--muted);
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+    @media (max-width: 640px) {
+      header, nav, main { padding-left: 1rem; padding-right: 1rem; }
+      h1 { font-size: 1.8rem; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="badge">// Počítačové siete</div>
+  <h1>Domáce <span>Úlohy</span></h1>
+  <p class="subtitle">$ sieťové_technológie &mdash; INF / interaktívny_zborník</p>
+</header>
+
+<nav>
+  <a href="#" class="active" data-tema="1">Téma 1 — Základy sietí</a>
+  <a href="#" data-tema="2">Téma 2 — Káble a kabeláž</a>
+</nav>
+
+<main>
+
+  <!-- TEMA 1 -->
+  <section class="tema visible" id="tema-1">
+
+    <div class="uloha open">
+      <div class="uloha-header">
+        <span class="uloha-num">Úloha 1</span>
+        <span class="uloha-title">Definície a komponenty sietí</span>
+        <span class="uloha-toggle">&#9660;</span>
+      </div>
+      <div class="uloha-body">
+
+        <div class="otazka">
+          <div class="otazka-label">// 1a</div>
+          <h3>Definujte pojem počítačová sieť.</h3>
+          <div class="info-box">
+            <p><strong>Počítačová sieť</strong> je sústava dvoch alebo viacerých navzájom prepojených zariadení (počítačov, serverov, tlačiarní a iných periférií), ktoré dokážu medzi sebou komunikovať a zdieľať zdroje (dáta, hardvér, softvér) prostredníctvom prenosového média a komunikačných protokolov.</p>
+          </div>
+          <p>Základné účely počítačovej siete:</p>
+          <ul>
+            <li>Zdieľanie dát a súborov medzi zariadeniami</li>
+            <li>Zdieľanie hardvérových prostriedkov (tlačiarne, skenery, disky)</li>
+            <li>Komunikácia medzi používateľmi (e-mail, chat, VoIP)</li>
+            <li>Centralizovaná správa a zálohovanie dát</li>
+            <li>Prístup na internet a iné siete</li>
+          </ul>
+        </div>
+
+        <div class="otazka">
+          <div class="otazka-label">// 1b</div>
+          <h3>Definujte a vymenujte pasívne komponenty sietí.</h3>
+          <div class="info-box">
+            <p><strong>Pasívne komponenty</strong> sú zariadenia a materiály, ktoré <em>nepotrebujú napájanie</em> na svoju funkciu. Zabezpečujú fyzické prepojenie zariadení v sieti, ale aktívne nespracúvajú ani nezosilňujú signál.</p>
+          </div>
+          <p>Príklady pasívnych komponentov:</p>
+          <ul>
+            <li><strong>Káble</strong> — koaxiálny kábel, krútená dvojlinka (UTP/STP/FTP), optický kábel</li>
+            <li><strong>Konektory</strong> — RJ-45, BNC, LC/SC</li>
+            <li><strong>Zástrčky a zásuvky</strong> — dátové zásuvky v stenách</li>
+            <li><strong>Patch panely</strong> — pasívne rozvádzačové panely na ukončenie káblov</li>
+            <li><strong>Rozvádzače (racks)</strong> — kovové skrine na uloženie zariadení</li>
+            <li><strong>Chrániče káblov, žľaby, potrubia</strong> — mechanická ochrana vedenia</li>
+            <li><strong>Splice boxy (optika)</strong> — spojky optických káblov</li>
+          </ul>
+        </div>
+
+        <div class="otazka">
+          <div class="otazka-label">// 1c</div>
+          <h3>Definujte a vymenujte aktívne komponenty sietí.</h3>
+          <div class="info-box">
+            <p><strong>Aktívne komponenty</strong> sú zariadenia, ktoré <em>potrebujú napájanie</em> a aktívne spracúvajú, zosilňujú alebo smerujú sieťové signály a dáta.</p>
+          </div>
+          <p>Príklady aktívnych komponentov:</p>
+          <ul>
+            <li><strong>Sieťová karta (NIC)</strong> — rozhranie zariadenia pre pripojenie do siete</li>
+            <li><strong>Hub</strong> — zariadenie 1. vrstvy; rozsiela signál do všetkých portov</li>
+            <li><strong>Switch (prepínač)</strong> — zariadenie 2. vrstvy; smeruje rámce podľa MAC adries</li>
+            <li><strong>Router (smerovač)</strong> — zariadenie 3. vrstvy; smeruje pakety podľa IP adries</li>
+            <li><strong>Access Point (AP)</strong> — bezdrôtový prístupový bod pre WiFi</li>
+            <li><strong>Repeater (opakovač)</strong> — zosilňuje a regeneruje sieťový signál</li>
+            <li><strong>Modem</strong> — moduluje/demoduluje signál pre internet</li>
+            <li><strong>Firewall</strong> — hardvérové/softvérové zariadenie na filtrovanie prevádzky</li>
+          </ul>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="uloha open">
+      <div class="uloha-header">
+        <span class="uloha-num">Úloha 1.2</span>
+        <span class="uloha-title">Priamy a krížený kábel — T568A &amp; T568B</span>
+        <span class="uloha-toggle">&#9660;</span>
+      </div>
+      <div class="uloha-body">
+
+        <div class="otazka">
+          <div class="otazka-label">// 1.2a</div>
+          <h3>Usporiadanie farieb žíl krútenej dvojlinky pre priamy a krížený kábel.</h3>
+          <p>Štandardné farby žíl UTP kábla (8 vodičov): <strong>BO, O, BZ, Z, BM, M, BH, H</strong></p>
+          <p style="margin-top:0.5rem;color:var(--muted);font-size:0.85rem">BZ = bielo-zelená &nbsp;|&nbsp; Z = zelená &nbsp;|&nbsp; BO = bielo-oranžová &nbsp;|&nbsp; O = oranžová &nbsp;|&nbsp; M = modrá &nbsp;|&nbsp; BM = bielo-modrá &nbsp;|&nbsp; BH = bielo-hnedá &nbsp;|&nbsp; H = hnedá</p>
+
+          <div class="kabel-grid">
+            <div class="kabel-card">
+              <div class="kabel-card-title">&#9670; T568A</div>
+              <div class="kabel-pins">
+                <div class="pin-row"><span class="pin-num">1</span><span class="pin-wire w-bz">BZ</span><span style="color:var(--muted);font-size:0.72rem">bielo-zelená</span></div>
+                <div class="pin-row"><span class="pin-num">2</span><span class="pin-wire w-z">Z</span><span style="color:var(--muted);font-size:0.72rem">zelená</span></div>
+                <div class="pin-row"><span class="pin-num">3</span><span class="pin-wire w-bo">BO</span><span style="color:var(--muted);font-size:0.72rem">bielo-oranžová</span></div>
+                <div class="pin-row"><span class="pin-num">4</span><span class="pin-wire w-m">M</span><span style="color:var(--muted);font-size:0.72rem">modrá</span></div>
+                <div class="pin-row"><span class="pin-num">5</span><span class="pin-wire w-bm">BM</span><span style="color:var(--muted);font-size:0.72rem">bielo-modrá</span></div>
+                <div class="pin-row"><span class="pin-num">6</span><span class="pin-wire w-o">O</span><span style="color:var(--muted);font-size:0.72rem">oranžová</span></div>
+                <div class="pin-row"><span class="pin-num">7</span><span class="pin-wire w-bh">BH</span><span style="color:var(--muted);font-size:0.72rem">bielo-hnedá</span></div>
+                <div class="pin-row"><span class="pin-num">8</span><span class="pin-wire w-h">H</span><span style="color:var(--muted);font-size:0.72rem">hnedá</span></div>
+              </div>
+            </div>
+
+            <div class="kabel-card">
+              <div class="kabel-card-title">&#9670; T568B</div>
+              <div class="kabel-pins">
+                <div class="pin-row"><span class="pin-num">1</span><span class="pin-wire w-bo">BO</span><span style="color:var(--muted);font-size:0.72rem">bielo-oranžová</span></div>
+                <div class="pin-row"><span class="pin-num">2</span><span class="pin-wire w-o">O</span><span style="color:var(--muted);font-size:0.72rem">oranžová</span></div>
+                <div class="pin-row"><span class="pin-num">3</span><span class="pin-wire w-bz">BZ</span><span style="color:var(--muted);font-size:0.72rem">bielo-zelená</span></div>
+                <div class="pin-row"><span class="pin-num">4</span><span class="pin-wire w-m">M</span><span style="color:var(--muted);font-size:0.72rem">modrá</span></div>
+                <div class="pin-row"><span class="pin-num">5</span><span class="pin-wire w-bm">BM</span><span style="color:var(--muted);font-size:0.72rem">bielo-modrá</span></div>
+                <div class="pin-row"><span class="pin-num">6</span><span class="pin-wire w-z">Z</span><span style="color:var(--muted);font-size:0.72rem">zelená</span></div>
+                <div class="pin-row"><span class="pin-num">7</span><span class="pin-wire w-bh">BH</span><span style="color:var(--muted);font-size:0.72rem">bielo-hnedá</span></div>
+                <div class="pin-row"><span class="pin-num">8</span><span class="pin-wire w-h">H</span><span style="color:var(--muted);font-size:0.72rem">hnedá</span></div>
+              </div>
+            </div>
+          </div>
+
+          <div style="margin-top:1.5rem">
+            <p><strong style="color:#fff">Priamy kábel (straight-through):</strong> Oba konce zakončené rovnakou normou — T568A–T568A alebo T568B–T568B. Používa sa na prepojenie zariadení rôzneho typu (PC ↔ switch).</p>
+            <p style="margin-top:0.75rem"><strong style="color:#fff">Krížený kábel (crossover):</strong> Jeden koniec T568A, druhý T568B. Piny 1↔3 a 2↔6 sú prehodené — prekríži vysielací a prijímací pár. Používa sa na priame prepojenie zariadení rovnakého typu (PC ↔ PC). Dnes ho nahrádza technológia Auto-MDI/MDIX.</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- TEMA 2 -->
+  <section class="tema" id="tema-2">
+
+    <div class="uloha open">
+      <div class="uloha-header">
+        <span class="uloha-num">Úloha 2</span>
+        <span class="uloha-title">Kontrola TP kábla a štruktúrovaná kabeláž</span>
+        <span class="uloha-toggle">&#9660;</span>
+      </div>
+      <div class="uloha-body">
+
+        <div class="otazka">
+          <div class="otazka-label">// 2b</div>
+          <h3>Uveďte spôsob kontroly TP kábla pomocou meracieho prístroja.</h3>
+          <p>Na kontrolu krútenej dvojlinky (TP) sa používa <strong>káblový tester</strong> (napr. Fluke Networks, Klein Tools).</p>
+          <div class="info-box">
+            <p>Tester posiela elektrický signál cez každú žilu a overuje kontinuitu, správne zoradenie pínov a skraty.</p>
+          </div>
+          <ul>
+            <li><strong>Kontinuita (spojitosť)</strong> — overí, že každý vodič je neprerušený od konca ku koncu</li>
+            <li><strong>Správne zoradenie pínov (pin mapping)</strong> — kontroluje zapojenie žíl podľa T568A alebo T568B</li>
+            <li><strong>Skraty</strong> — odhaľuje nežiaduce spojenia medzi vodičmi</li>
+            <li><strong>Prehodenie párov (reversed pairs)</strong> — oba vodiče páru sú vymenené</li>
+            <li><strong>Rozdelenie párov (split pairs)</strong> — vodiče zapojené na správne piny, ale z rôznych párov</li>
+          </ul>
+          <p style="margin-top:0.75rem">Postup: Zakončiť kábel konektormi RJ-45 → zapojiť oba konce do testera (Master a Remote) → spustiť test → tester zobrazí stav každého páru LED indikátorom alebo na displeji.</p>
+          <p style="margin-top:0.5rem">Pokročilejšie prístroje (Fluke DTX) merajú aj <em>útlm (attenuation)</em>, <em>NEXT (Near-End Crosstalk)</em> a <em>dĺžku kábla</em>.</p>
+        </div>
+
+        <div class="otazka">
+          <div class="otazka-label">// 2c</div>
+          <h3>Popíšte a zdôvodnite význam štruktúrovanej kabeláže.</h3>
+          <div class="info-box">
+            <p><strong>Štruktúrovaná kabeláž</strong> je systematicky navrhnutá kabelážna infraštruktúra budovy alebo kampusu, navrhnutá podľa medzinárodných noriem (ISO/IEC 11801, TIA-568), nezávislá od konkrétnych aplikácií.</p>
+          </div>
+          <p>Prečo je dôležitá:</p>
+          <ul>
+            <li><strong>Flexibilita</strong> — jeden systém kabeláže podporuje rôzne aplikácie (dátové, hlasové, video)</li>
+            <li><strong>Jednoduchá správa</strong> — prepojenie zariadení sa rieši na patch paneli, bez kladenia nových káblov</li>
+            <li><strong>Spoľahlivosť a výkon</strong> — garantovaná kvalita podľa noriem (Cat5e, Cat6, Cat6A, Cat7)</li>
+            <li><strong>Škálovateľnosť</strong> — budúce rozšírenie nevyžaduje výmenu celej infraštruktúry</li>
+            <li><strong>Dlhá životnosť</strong> — kvalitná kabeláž vydrží 15–25 rokov</li>
+            <li><strong>Zníženie nákladov</strong> — unifikovaný systém znižuje náklady na údržbu</li>
+          </ul>
+          <p style="margin-top:0.75rem">Skladá sa z: horizontálnej kabeláže, vertikálnej chrbtovej kabeláže (Backbone), dátových rozvádzačov (TD, FD, BD, CD) a pracovných zásuviek.</p>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="uloha open">
+      <div class="uloha-header">
+        <span class="uloha-num">Úloha 2.1</span>
+        <span class="uloha-title">Porovnanie typov káblov a ekonomická výhodnosť</span>
+        <span class="uloha-toggle">&#9660;</span>
+      </div>
+      <div class="uloha-body">
+
+        <div class="otazka">
+          <div class="otazka-label">// 2.1a</div>
+          <h3>Porovnajte výhody a nevýhody koaxiálnych káblov, krútenej dvojlinky a optických káblov.</h3>
+          <table class="comp-table">
+            <thead>
+              <tr>
+                <th>Typ kábla</th>
+                <th>Výhody</th>
+                <th>Nevýhody</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong style="color:#fff">Koaxiálny kábel</strong></td>
+                <td>
+                  <span class="tag-plus">+</span> Odolnosť voči EMI<br>
+                  <span class="tag-plus">+</span> Vhodný pre TV/CATV<br>
+                  <span class="tag-plus">+</span> Relatívne lacný<br>
+                  <span class="tag-plus">+</span> Jednoduchá inštalácia
+                </td>
+                <td>
+                  <span class="tag-minus">−</span> Nízka rýchlosť vs. ostatné<br>
+                  <span class="tag-minus">−</span> Väčší priemer, ťažší<br>
+                  <span class="tag-minus">−</span> Obmedzená dĺžka segmentu<br>
+                  <span class="tag-minus">−</span> Zastaralý v LAN prostredí
+                </td>
+              </tr>
+              <tr>
+                <td><strong style="color:#fff">Krútená dvojlinka (TP)</strong></td>
+                <td>
+                  <span class="tag-plus">+</span> Nízka cena<br>
+                  <span class="tag-plus">+</span> Ľahká inštalácia a oprava<br>
+                  <span class="tag-plus">+</span> Štandardizovaná (RJ-45)<br>
+                  <span class="tag-plus">+</span> Dostupná (Cat5e–Cat8)
+                </td>
+                <td>
+                  <span class="tag-minus">−</span> Obmedzená vzdialenosť (100 m)<br>
+                  <span class="tag-minus">−</span> Náchylnosť na EMI (UTP)<br>
+                  <span class="tag-minus">−</span> Nižšia rýchlosť ako optika
+                </td>
+              </tr>
+              <tr>
+                <td><strong style="color:#fff">Optický kábel</strong></td>
+                <td>
+                  <span class="tag-plus">+</span> Extrémne vysoká rýchlosť (Tb/s)<br>
+                  <span class="tag-plus">+</span> Imúnny voči EMI<br>
+                  <span class="tag-plus">+</span> Veľké vzdialenosti (km)<br>
+                  <span class="tag-plus">+</span> Bezpečný, ťažko odpočúvateľný<br>
+                  <span class="tag-plus">+</span> Malý útlm signálu
+                </td>
+                <td>
+                  <span class="tag-minus">−</span> Vyššia cena<br>
+                  <span class="tag-minus">−</span> Náročnejšia inštalácia<br>
+                  <span class="tag-minus">−</span> Krehké vlákno<br>
+                  <span class="tag-minus">−</span> Drahšie aktívne zariadenia (SFP)
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="otazka">
+          <div class="otazka-label">// 2.1b</div>
+          <h3>Porovnajte ekonomickú výhodnosť rôznych typov internetového pripojenia.</h3>
+          <table class="comp-table">
+            <thead>
+              <tr>
+                <th>Typ pripojenia</th>
+                <th>Rýchlosť</th>
+                <th>Cena/mes.</th>
+                <th>Poznámka</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong style="color:#fff">Telefónna linka (DSL/ADSL)</strong></td>
+                <td>1–100 Mb/s</td>
+                <td>&#127802; Nízka</td>
+                <td>Závisí od vzdialenosti od ústredne; asymetrické; zastarávajúca technológia</td>
+              </tr>
+              <tr>
+                <td><strong style="color:#fff">Koaxiálny kábel (CATV/HFC)</strong></td>
+                <td>50–1000 Mb/s</td>
+                <td>&#127803; Stredná</td>
+                <td>Zdieľaný kanál v okolí; download >> upload; bežne u kábloviek</td>
+              </tr>
+              <tr>
+                <td><strong style="color:#fff">Krútená dvojlinka (Ethernet)</strong></td>
+                <td>100 Mb/s – 1 Gb/s</td>
+                <td>&#127803; Stredná</td>
+                <td>Stabilné, symetrické; bežná podniková aj domácnosť sieť</td>
+              </tr>
+              <tr>
+                <td><strong style="color:#fff">Optický kábel (FTTH)</strong></td>
+                <td>100 Mb/s – 10 Gb/s</td>
+                <td>&#127800; Stredná–Vyššia</td>
+                <td>Najvyšší výkon, symetrické rýchlosti; najlepšia voľba ak je dostupná</td>
+              </tr>
+              <tr>
+                <td><strong style="color:#fff">WiFi (bezdrôtové)</strong></td>
+                <td>10 Mb/s – 1 Gb/s+</td>
+                <td>&#127803; Variabilná</td>
+                <td>Mobilita; závisí od pokrytia; rušenie; vyššia latencia; lacnejšia inštalácia</td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="info-box" style="margin-top:1.25rem">
+            <p><strong>Záver:</strong> Z hľadiska pomeru cena/výkon je najvýhodnejšie pripojenie cez <strong>FTTH (optiku)</strong>, ak je dostupné. Pre domácnosti bez optiky je dobrá voľba koaxiálny kábel (káblovka) alebo VDSL2. WiFi je výhodné tam, kde nie je možná drôtová inštalácia.</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <span>Počítačové siete &middot; DÚ zborník</span>
+  <span>T568A &middot; T568B &middot; UTP &middot; STP &middot; FTTH</span>
+</footer>
+
+<script>
+  document.querySelectorAll('nav a').forEach(link => {
+    link.addEventListener('click', e => {
+      e.preventDefault();
+      const temaId = link.dataset.tema;
+      document.querySelectorAll('nav a').forEach(l => l.classList.remove('active'));
+      link.classList.add('active');
+      document.querySelectorAll('.tema').forEach(t => t.classList.remove('visible'));
+      document.getElementById('tema-' + temaId).classList.add('visible');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  });
+
+  document.querySelectorAll('.uloha-header').forEach(header => {
+    header.addEventListener('click', () => {
+      header.closest('.uloha').classList.toggle('open');
+    });
+  });
+</script>
+</body>
+</html>
