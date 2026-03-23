@@ -275,6 +275,7 @@
 <nav>
   <a href="#" class="active" data-tema="1">Téma 1 — Základy sietí</a>
   <a href="#" data-tema="2">Téma 2 — Káble a kabeláž</a>
+  <a href="#" data-tema="3">Téma 3 — Číselné sústavy &amp; IP</a>
 </nav>
 
 <main>
@@ -571,6 +572,208 @@
 
       </div>
     </div>
+  </section>
+
+
+  <!-- TEMA 3 -->
+  <section class="tema" id="tema-3">
+
+    <div class="uloha open">
+      <div class="uloha-header">
+        <span class="uloha-num">Úloha 3</span>
+        <span class="uloha-title">Číselné sústavy a adresovanie počítača</span>
+        <span class="uloha-toggle">&#9660;</span>
+      </div>
+      <div class="uloha-body">
+
+        <div class="otazka">
+          <div class="otazka-label">// 3a</div>
+          <h3>Definujte dvojkovú, desiatkovú a hexadecimálnu číselnú sústavu.</h3>
+
+          <div class="info-box">
+            <p><strong>Číselná sústava</strong> určuje spôsob zápisu čísel pomocou obmedzeného počtu symbolov (číslic) a základ, ktorý hovorí, koľko rôznych hodnôt môže jedna pozícia nadobudnúť.</p>
+          </div>
+
+          <table class="comp-table" style="margin-bottom:1.25rem">
+            <thead>
+              <tr>
+                <th>Sústava</th>
+                <th>Základ</th>
+                <th>Číslice</th>
+                <th>Príklad</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong style="color:#fff">Dvojková (binárna)</strong></td>
+                <td style="font-family:'Space Mono',monospace;color:var(--accent)">2</td>
+                <td>0, 1</td>
+                <td style="font-family:'Space Mono',monospace">1010<sub>2</sub> = 10<sub>10</sub></td>
+              </tr>
+              <tr>
+                <td><strong style="color:#fff">Desiatková (decimálna)</strong></td>
+                <td style="font-family:'Space Mono',monospace;color:var(--accent)">10</td>
+                <td>0 – 9</td>
+                <td style="font-family:'Space Mono',monospace">255<sub>10</sub></td>
+              </tr>
+              <tr>
+                <td><strong style="color:#fff">Hexadecimálna</strong></td>
+                <td style="font-family:'Space Mono',monospace;color:var(--accent)">16</td>
+                <td>0–9, A–F</td>
+                <td style="font-family:'Space Mono',monospace">FF<sub>16</sub> = 255<sub>10</sub></td>
+              </tr>
+            </tbody>
+          </table>
+
+          <p><strong style="color:#fff">Dvojková sústava:</strong> Základ 2 — každá pozícia (bit) môže mať hodnotu 0 alebo 1. Hodnota čísla sa vypočíta ako súčet mocnín dvojky. Napr. 1011₂ = 1·2³ + 0·2² + 1·2¹ + 1·2⁰ = 8+0+2+1 = <strong>11</strong>.</p>
+          <p style="margin-top:0.75rem"><strong style="color:#fff">Desiatková sústava:</strong> Základ 10 — bežná číselná sústava, ktorú používame v každodennom živote. Každá pozícia je mocninou čísla 10 (jednotky, desiatky, stovky...).</p>
+          <p style="margin-top:0.75rem"><strong style="color:#fff">Hexadecimálna sústava:</strong> Základ 16 — okrem číslic 0–9 sa používajú písmená A(10), B(11), C(12), D(13), E(14), F(15). Jeden hexadecimálny znak zastupuje presne 4 bity (nibble), čo ju robí kompaktným zápisom binárnych hodnôt. Napr. FF₁₆ = 1111 1111₂ = 255₁₀.</p>
+        </div>
+
+        <div class="otazka">
+          <div class="otazka-label">// 3b</div>
+          <h3>Vysvetlite význam použitia dvojkovej sústavy v číslicových zariadeniach.</h3>
+          <div class="info-box">
+            <p>Digitálne zariadenia (počítače, procesory, pamäte) pracujú s elektrickými signálmi, ktoré môžu mať len <strong>dve stavy</strong>: napätie je prítomné (1) alebo nie je (0). Dvojková sústava je preto prirodzenou voľbou pre reprezentáciu dát v elektronike.</p>
+          </div>
+          <p>Dôvody použitia dvojkovej sústavy:</p>
+          <ul>
+            <li><strong>Fyzická realizovateľnosť</strong> — tranzistory v obvode môžu byť len zapnuté (1) alebo vypnuté (0); stačia 2 stavy namiesto 10</li>
+            <li><strong>Odolnosť voči šumu</strong> — pri dvoch stavoch je oveľa jednoduchšie rozlíšiť 0 od 1 aj pri rušení signálu</li>
+            <li><strong>Jednoduchá logika</strong> — logické operácie (AND, OR, NOT) sa priamo realizujú hradlami (gates) v obvode</li>
+            <li><strong>Aritmetika</strong> — sčítanie, odčítanie, násobenie sú jednoduché binárne operácie implementovateľné v hardware</li>
+            <li><strong>Spoľahlivosť a rýchlosť</strong> — menej stavov = menej chýb a vyššia rýchlosť spracovania</li>
+          </ul>
+          <p style="margin-top:0.75rem">Každý znak, obrázok, video alebo zvuk v počítači je uložený ako postupnosť núl a jedničiek — <strong>bitov</strong>. 8 bitov = 1 byte, čo môže uložiť čísla 0–255.</p>
+        </div>
+
+        <div class="otazka">
+          <div class="otazka-label">// 3c</div>
+          <h3>Vysvetlite rozdiel medzi fyzickou a logickou adresou počítača.</h3>
+
+          <div class="kabel-grid">
+            <div class="kabel-card">
+              <div class="kabel-card-title">&#9670; Fyzická adresa (MAC)</div>
+              <div style="padding:1rem;font-size:0.88rem;color:#c8c8de;line-height:1.7">
+                <p>Hardvérová adresa priradená <strong>výrobcom</strong> sieťovej karty (NIC). Je zapísaná priamo do čipu a (bežne) sa nemení.</p>
+                <br>
+                <p style="font-family:'Space Mono',monospace;color:var(--accent);font-size:0.8rem">Formát: AA:BB:CC:DD:EE:FF<br>(48 bitov = 6 bajtov v hex)</p>
+                <br>
+                <ul style="padding-left:1.2rem;margin-top:0.5rem">
+                  <li>Funguje na 2. vrstve OSI (Data Link)</li>
+                  <li>Jedinečná pre každé zariadenie na svete</li>
+                  <li>Slúži na komunikáciu v rámci lokálnej siete (LAN)</li>
+                  <li>Prvé 3 bajty = OUI (výrobca), ďalšie 3 = sériové číslo</li>
+                </ul>
+              </div>
+            </div>
+            <div class="kabel-card">
+              <div class="kabel-card-title">&#9670; Logická adresa (IP)</div>
+              <div style="padding:1rem;font-size:0.88rem;color:#c8c8de;line-height:1.7">
+                <p>Softvérová adresa priradená <strong>administrátorom</strong> alebo automaticky (DHCP). Môže sa meniť.</p>
+                <br>
+                <p style="font-family:'Space Mono',monospace;color:var(--accent);font-size:0.8rem">Formát IPv4: 192.168.1.10<br>(32 bitov = 4 oktety v dec.)</p>
+                <br>
+                <ul style="padding-left:1.2rem;margin-top:0.5rem">
+                  <li>Funguje na 3. vrstve OSI (Network)</li>
+                  <li>Umožňuje smerovanie medzi sieťami (internet)</li>
+                  <li>Delí sa na časť siete a časť zariadenia</li>
+                  <li>Preklad IP ↔ MAC zabezpečuje protokol ARP</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div class="info-box" style="margin-top:1.25rem">
+            <p><strong>Analógia:</strong> MAC adresa je ako <em>rodné číslo</em> — trvalá a jedinečná. IP adresa je ako <em>poštová adresa</em> — môže sa zmeniť, keď sa zariadenie presunie do inej siete.</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ULOHA 3.1 -->
+    <div class="uloha open">
+      <div class="uloha-header">
+        <span class="uloha-num">Úloha 3.1</span>
+        <span class="uloha-title">Triedy IP adries A, B, C</span>
+        <span class="uloha-toggle">&#9660;</span>
+      </div>
+      <div class="uloha-body">
+
+        <div class="otazka">
+          <div class="otazka-label">// 3.1a</div>
+          <h3>Rozdeľte IP adresy do tried A, B, C a vysvetlite logiku delenia.</h3>
+
+          <div class="info-box">
+            <p>IPv4 adresy (32-bitové) boli historicky rozdelené do tried podľa hodnoty <strong>prvého oktetu</strong>. Trieda určuje, koľko bitov patrí časti siete (Network ID) a koľko časti zariadenia (Host ID).</p>
+          </div>
+
+          <table class="comp-table">
+            <thead>
+              <tr>
+                <th>Trieda</th>
+                <th>Rozsah 1. oktetu</th>
+                <th>Začiatok (bity)</th>
+                <th>Sieť / Host bity</th>
+                <th>Počet sietí</th>
+                <th>Hostiteľov/sieť</th>
+                <th>Použitie</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong style="color:var(--accent);font-size:1.1rem">A</strong></td>
+                <td style="font-family:'Space Mono',monospace">1 – 126</td>
+                <td style="font-family:'Space Mono',monospace;color:var(--green)">0xxxxxxx</td>
+                <td>8 / 24</td>
+                <td>126</td>
+                <td>16 777 214</td>
+                <td>Veľké siete (ISP, vlády)</td>
+              </tr>
+              <tr>
+                <td><strong style="color:var(--accent);font-size:1.1rem">B</strong></td>
+                <td style="font-family:'Space Mono',monospace">128 – 191</td>
+                <td style="font-family:'Space Mono',monospace;color:var(--green)">10xxxxxx</td>
+                <td>16 / 16</td>
+                <td>16 384</td>
+                <td>65 534</td>
+                <td>Stredné siete (univerzity, firmy)</td>
+              </tr>
+              <tr>
+                <td><strong style="color:var(--accent);font-size:1.1rem">C</strong></td>
+                <td style="font-family:'Space Mono',monospace">192 – 223</td>
+                <td style="font-family:'Space Mono',monospace;color:var(--green)">110xxxxx</td>
+                <td>24 / 8</td>
+                <td>2 097 152</td>
+                <td>254</td>
+                <td>Malé siete (domácnosti, pobočky)</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <p style="margin-top:1.25rem"><strong style="color:#fff">Logika delenia:</strong> Trieda je určená hodnotou <em>prvých bitov</em> prvého oktetu:</p>
+          <ul>
+            <li>Trieda <strong>A</strong> — začína bitom <code style="background:rgba(0,229,255,0.1);padding:1px 6px;border-radius:3px;font-family:'Space Mono',monospace;color:var(--accent)">0</code> → prvý oktet 0–127 (127 je rezervovaný pre loopback)</li>
+            <li>Trieda <strong>B</strong> — začína bitmi <code style="background:rgba(0,229,255,0.1);padding:1px 6px;border-radius:3px;font-family:'Space Mono',monospace;color:var(--accent)">10</code> → prvý oktet 128–191</li>
+            <li>Trieda <strong>C</strong> — začína bitmi <code style="background:rgba(0,229,255,0.1);padding:1px 6px;border-radius:3px;font-family:'Space Mono',monospace;color:var(--accent)">110</code> → prvý oktet 192–223</li>
+          </ul>
+
+          <p style="margin-top:1rem"><strong style="color:#fff">Príklady IP adries:</strong></p>
+          <ul>
+            <li><code style="font-family:'Space Mono',monospace;color:var(--green)">10.0.0.1</code> — trieda A (prvý oktet 10)</li>
+            <li><code style="font-family:'Space Mono',monospace;color:var(--green)">172.16.0.1</code> — trieda B (prvý oktet 172)</li>
+            <li><code style="font-family:'Space Mono',monospace;color:var(--green)">192.168.1.1</code> — trieda C (prvý oktet 192) — najbežnejšia domáca sieť</li>
+          </ul>
+
+          <div class="info-box" style="margin-top:1.25rem">
+            <p><strong>Poznámka:</strong> Triedy D (224–239, multicast) a E (240–255, rezervované) sa v bežných sieťach nepoužívajú. Dnes sa namiesto classful delenia používa <strong>CIDR</strong> (napr. 192.168.1.0/24), ktorý je flexibilnejší.</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
   </section>
 
 </main>
